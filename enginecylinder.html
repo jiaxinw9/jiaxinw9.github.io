@@ -56,7 +56,7 @@ d3.csv("mpg.csv", function(d) {
         .attr("transform","translate(" + margin + "," + margin + ")")
             .data([data])
             .attr("class", "line")
-            .style("stroke", "red")
+            .style("stroke", "blue")
             .style("fill", "none")
             .style("stroke-width", "2px")
             .attr("d", cityMPGLine);
@@ -100,11 +100,9 @@ d3.csv("mpg.csv", function(d) {
 
 
         d3.select("svg").append("circle").attr("cx",400).attr("cy",130).attr("r", 6).style("fill", "green")
-        d3.select("svg").append("circle").attr("cx",400).attr("cy",160).attr("r", 6).style("fill", "black")
-        d3.select("svg").append("circle").attr("cx",400).attr("cy",190).attr("r", 6).style("fill", "red")
+        d3.select("svg").append("circle").attr("cx",400).attr("cy",190).attr("r", 6).style("fill", "blue")
 
         d3.select("svg").append("text").attr("x", 420).attr("y", 130).text("Highway").style("font-size", "15px").attr("alignment-baseline","middle")
-        d3.select("svg").append("text").attr("x", 420).attr("y", 160).text("Combined").style("font-size", "15px").attr("alignment-baseline","middle")
         d3.select("svg").append("text").attr("x", 420).attr("y", 190).text("City").style("font-size", "15px").attr("alignment-baseline","middle")
 
    })
