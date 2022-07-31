@@ -1,0 +1,143 @@
+
+
+<html>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+    <body onload='init()'>
+    
+        <style>
+    
+            .tooltip {
+                position: absolute;
+                font-size: 12px;
+                width:  auto;
+                height: auto;
+                pointer-events: none;
+                background-color: rgb(98, 75, 75);
+            }
+        </style>
+
+        <div class="header">
+            <h1>The relationship between Average City MPG and Average Highway MPG</h1>
+        </div>
+          
+    
+    <svg width=600 height=600>
+    </svg>
+    <script>
+
+    async function init() {
+    
+        var margin = 50;
+        var width = 500;
+        var height = 500;
+        
+        data = await d3.csv("cars2017.csv");
+        
+        
+        var x = d3.scaleLog()
+            .domain([10,150])
+            .range([0,500]);
+            
+        var y = d3.scaleLog()
+            .domain([10,150])
+            .range([500,0]);
+        
+        var tooltip = d3.select("body").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity", 0);
+        
+            var tipMouseover = function(d) {
+            var html  = d.Make + " (" + d.Fuel + ") " + d.EngineCylinders + " cylinder <br/>" +
+                        "Avg City MPG: " + d.AverageCityMPG + "<br/> Avg Highway MPG: " + d.AverageHighwayMPG;
+        
+            tooltip.html(html)
+                .style("left", (d3.event.pageX + 15) + "px")
+                .style("top", (d3.event.pageY - 28) + "px")
+            .transition()
+                .duration(200)
+                .style("opacity", 1) 
+        
+        };
+
+        var tipMouseout = function(d) {
+            tooltip.transition()
+                .duration(300)
+                .style("opacity", 0);
+        };
+        
+        var color = {}
+        color["Gasoline"] = "orange"
+        color["Electricity"] = "green"
+        color["Diesel"] = "blue"
+
+        d3.select("svg").
+            attr("width",width + 2*margin)
+            .attr("height",height + 2*margin)
+            .append("g")
+                .attr("transform","translate(" + margin + "," + margin + ")")
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) { return x(d.AverageCityMPG)})
+            .attr("cy", function(d) { return y(d.AverageHighwayMPG)})
+            .attr("r", function(d,i) { return 6 + parseInt(d.EngineCylinders); })
+            .style("stroke", "black")
+            .attr("fill", function(d) { return color[d.Fuel];})
+            .on("mouseover", tipMouseover)
+            .on("mouseout", tipMouseout);
+        
+        
+        d3.select("svg").append("g")
+            .attr("transform", "translate(" + margin + "," + margin + ")")
+            .attr("fill", "none")
+            .attr("font-size", "10")
+            .attr("text-anchor", "end")
+            .call(d3.axisLeft(y)
+                .tickValues([10, 20, 50, 100])
+                .tickFormat(d3.format("~s")));
+        
+        d3.select("svg").append("g")
+            .attr("transform", "translate(" + margin + "," + (height+margin) + ")")
+            .attr("fill", "none")
+            .attr("font-size", "10")
+            .attr("text-anchor", "end")
+            .call(d3.axisBottom(x)
+                .tickValues([10, 20, 50, 100])
+                .tickFormat(d3.format("~s")));
+                
+        d3.select("svg").append("text").attr("x", 470).attr("y", 430).text("Gasoline").style("font-size", "15px").attr("alignment-baseline","middle")
+        d3.select("svg").append("text").attr("x", 470).attr("y", 460).text("Diesel").style("font-size", "15px").attr("alignment-baseline","middle")
+        d3.select("svg").append("text").attr("x", 470).attr("y", 490).text("Electric").style("font-size", "15px").attr("alignment-baseline","middle")           
+        
+        d3.select("svg").append("circle").attr("cx",450).attr("cy",430).attr("r", 6).style("fill", "orange")
+        d3.select("svg").append("circle").attr("cx",450).attr("cy",460).attr("r", 6).style("fill", "blue")
+        d3.select("svg").append("circle").attr("cx",450).attr("cy",490).attr("r", 6).style("fill", "green")
+
+        d3.select("svg").append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width - margin * 3)
+        .attr("y", height + 2 * margin - 6)
+        .text("Average City MPG");
+
+
+        d3.select("svg").append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("x", -4 * margin)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Average Highway MPG");
+    }
+    
+
+    
+    </script>
+    <p>
+        This scatterplot indicates that there is a postive relationship between city mpg and highway mpg. Diesel cars have more city/highway MPG than gasoline cars. At the same time, the statistics for electric cars is not making sense since there is no cylinder for them at all.
+    </p>
+    <h4> <a href="index.html">Home Page</a></h4></div>
+    </body>
+    </html>

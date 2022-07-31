@@ -1,0 +1,125 @@
+
+
+<html>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+    <body>
+
+
+          
+
+    <div class="header">
+        <h1>Engine Cylinder and MPG</h1>
+    </div>
+    <svg width=1000 height=600>
+    </svg>
+    <script>
+    
+    var margin = 50;
+    var width = 500;
+    var height = 500;
+
+        
+    var x = d3.scaleLinear()
+        .range([0,width]);
+        
+    var y = d3.scaleLinear()
+        .range([height,0]);
+    
+    var cityMPGLine = d3.line()
+    .x(function(d) { return x(d.EngineCylinders); })
+    .y(function(d) { return y(d.CityMPG); });
+
+    var highwayMPGLine = d3.line()
+    .x(function(d) { return x(d.EngineCylinders); })
+    .y(function(d) { return y(d.HighwayMPG); });
+
+    
+
+    d3.select("svg").
+        attr("width",width + 4*margin)
+        .attr("height",height + 4*margin)
+        .append("g")
+            .attr("transform","translate(" + margin + "," + margin + ")");
+ 
+
+d3.csv("mpg.csv", function(d) {
+    d.CityMPG = parseFloat(d.CityMPG);
+    d.HighwayMPG = parseFloat(d.HighwayMPG);
+    d.EngineCylinders = parseFloat(d.EngineCylinders);
+    return d
+   }).then(function (data) {
+        
+        x.domain(d3.extent(data, function(d) { return d.EngineCylinders; }));
+        y.domain([0, 150]);
+        
+        d3.select("svg").append("path")
+        .attr("transform","translate(" + margin + "," + margin + ")")
+            .data([data])
+            .attr("class", "line")
+            .style("stroke", "red")
+            .style("fill", "none")
+            .style("stroke-width", "2px")
+            .attr("d", cityMPGLine);
+        
+        d3.select("svg").append("path")            
+        .attr("transform","translate(" + margin + "," + margin + ")")
+        .data([data])
+        .attr("class", "line")
+        .style("fill", "none")
+        .style("stroke", "green")
+        .style("stroke-width", "2px")
+        .attr("d", highwayMPGLine);
+
+        d3.select("svg").append("g")
+        .attr("transform", "translate(" + margin + "," + (height+margin) + ")")
+        .call(d3.axisBottom(x)
+            .tickValues([0, 2, 4, 6, 8, 10, 12])
+            .tickFormat(d3.format("~s")));
+            
+        d3.select("svg").append("g")
+            .attr("transform", "translate(" + margin + "," + margin + ")")
+            .call(d3.axisLeft(y)
+                .tickFormat(d3.format("~s")));
+        
+        d3.select("svg").append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width - margin * 3)
+        .attr("y", height + 2 * margin - 6)
+        .text("Engine Cylinders");
+
+
+        d3.select("svg").append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("x", -4 * margin)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Miles Per Gallon");
+
+
+        d3.select("svg").append("circle").attr("cx",400).attr("cy",130).attr("r", 6).style("fill", "green")
+        d3.select("svg").append("circle").attr("cx",400).attr("cy",160).attr("r", 6).style("fill", "black")
+        d3.select("svg").append("circle").attr("cx",400).attr("cy",190).attr("r", 6).style("fill", "red")
+
+        d3.select("svg").append("text").attr("x", 420).attr("y", 130).text("Highway").style("font-size", "15px").attr("alignment-baseline","middle")
+        d3.select("svg").append("text").attr("x", 420).attr("y", 160).text("Combined").style("font-size", "15px").attr("alignment-baseline","middle")
+        d3.select("svg").append("text").attr("x", 420).attr("y", 190).text("City").style("font-size", "15px").attr("alignment-baseline","middle")
+
+   })
+   .catch( error =>  console.log(error) );
+    
+    
+    </script>
+
+
+    <p>
+        This graph shows that there is negative relativeship between engine cylinders and MPG. The more cyliners a car have, the less MPG the car has.
+    </p>
+    <h4> <a href="index.html">Home Page</a></h4></div>
+
+
+    </body>
+    </html>
+
